@@ -44,6 +44,8 @@ jobs:
           name: Build front-end
           command: |
             # Your code here
+            cd ./frontend
+            npm i
             exit 1
       - save_cache:
           paths: [frontend/node_modules]
@@ -295,3 +297,4 @@ workflows:
           requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
+          sdfd
