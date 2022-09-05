@@ -81,12 +81,12 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          key: frontend-build
+          - key: frontend-build
       # Your job code here
       - run:
           name: test frontend code
           command: |
-          cd frontend
+          cd ./frontend
           npm run test
           exit 1
                 
