@@ -62,74 +62,116 @@ jobs:
       - run:
           name: Back-end build
           command: |
-             # Your code here ==================
-             cd ./backend
-             npm i
-             npm run build
-             exit 1
+            # Your code here ==================
+            cd ./backend
+            npm i
+            npm run build
+            exit 1
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
 
   test-frontend:
     docker:
-      # Docker image here
+      # Docker image here ===================
+      - image: circleci/node:13.8.0 
     steps:
       # Checkout code from git
+      - checkout
       # Restore from cache
+      - restore_cache:
+          key: frontend-build
       # Your job code here
+      - run:
+          name: test frontend code
+          command: |
+          cd ./frontend
+          npm run test
                 
   test-backend:
     docker:
-      # Docker image here
+      # Docker image here ==============
+      - image: circleci/node:13.8.0 
     steps:
       # Checkout code from git
+      - checkout
       # Restore from cache
+      - restore_cache:
+          key: backend-build
       # Your job code here
+      - run:
+          name: test backend code
+          command: |
+            cd ./backend
+            npm run test
             
   scan-frontend:
     docker:
-      # Docker image here
+      # Docker image here +++++++++++++++++++++++++++++++++++++++
+      - image: circleci/node:13.8.0 
     steps:
       # Checkout code from git
+      - checkout
       # Restore from cache
+      - restore_cache:
+          keys: frontend-build
       # Your job code here
+      - run:
+          name: audit the code for known major vulnerabilities
+          comman: |
+            cd frontend
+            npm audit --audit-level=critical
 
-  scan-backend:
+  scan-backend: 
     docker:
-      # Docker image here
+      # Docker image here +++++++++++++++++++++++++++++++++++++++++
+      - image: circleci/node:13.8.0 
     steps:
       # Checkout code from git
+      - checkout 
       # Restore from cache
+      - restore_cache:
+          keys: backend-build
       # Your job code here
+      - run:
+          name: audit the backend for known major vulnerabilities
+          command: |
+            cd backend 
+            npm audit --audit-level=critical
 
   deploy-infrastructure:
     docker:
       # Docker image here that supports AWS CLI
+      - image: cimg/aws:2022.06.1
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              #--tags project=your-tag \
-              # --stack-name "your back-end stack name with workflow id" \
-              # --parameter-overrides ID="your workflow id"  
+              --tags project=udaPeople \
+              --stack-name "backend-stack-${CIRCLE_BUILD_NUM}" \
+              --parameter-overrides ID="${CIRCLE_BUILD_NUM}"  
               exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              #--tags project=your-tag \
-              # --stack-name "your front-end stack name with workflow id" \
-              # --parameter-overrides ID="your workflow id"  
+              --tags project=udaPeople \
+              --stack-name "frontend-stack-${CIRCLE_BUILD_NUM}" \
+              --parameter-overrides ID="${CIRCLE_BUILD_NUM}"  
               exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             # Your code here
+            aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=backend-${CIRCLE_BUILD_NUM}" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text >> .circleci/ansible/inventory.txt
             exit 1
       - persist_to_workspace:
           root: ~/
@@ -140,31 +182,44 @@ jobs:
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
+      - image: ansible
     steps:
       # Checkout code from git
+      - checkout
       # Add ssh keys with fingerprint
+      - add_ssh_keys:
+          fingerprints: [1b:1b:ed:5a:23:6e:3f:19:55:3c:e4:23:27:75:74:67]
       # attach workspace
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
             # Your code here
+            apk add --update ansible 
             exit 1
       - run:
           name: Configure server
           command: |
             # Your code here
+            ansible-playbook -i ansible/inventory.txt ansible/configure-server.yml
             exit 1
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
+      - image: circleci/node:13.8.0 
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Run migrations
           command: |
             # Your code here
+            cd backend
+            MIGRATION_RESULT=$(npm run migrations)
+            echo $MIGRATION_RESULT 
             exit 1
       - run:
           name: Send migration results to memstash
@@ -175,13 +230,16 @@ jobs:
 
   deploy-frontend:
     docker:
-      # Docker image here that supports AWS CLI
+      # Docker image here that supports AWS CLI ************* i stoped here look carefully)
+      - image: cimg/aws:2022.06.1
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Install dependencies
           command: |
             # your code here
+            cd ..
       - run:
           name: Get backend url
           command: |
@@ -192,68 +250,89 @@ jobs:
           name: Deploy frontend objects
           command: |
             # your code here
+            cd ..
       # Here's where you will add some code to rollback on failure      
                     
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
+      - image: cimg/aws:2022.06.1
     steps:
       # Checkout code from git
+      - checkout
       # Add ssh keys with fingerprint
+      - add_ssh_keys:
+          fingerprints: [1b:1b:ed:5a:23:6e:3f:19:55:3c:e4:23:27:75:74:67]
       # attach workspace
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
             # your code here
+            cd ..
       - run:
           name: Deploy backend
           command: |
             # your code here
+            cd ..
       # Here's where you will add some code to rollback on failure  
 
   smoke-test:
     docker:
       # Lightweight Docker image 
+      - image: cimg/aws:2022.06.1
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Install dependencies
           command: |
             # your code here
+            ls
       - run:
           name: Get backend url
           command: |
             # your code here
+            ls 
       - run:
           name: Backend smoke test.
           command: |
             # your code here
+            ls
       - run:
           name: Frontend smoke test.
           command: |
             # your code here
+            ls 
       # Here's where you will add some code to rollback on failure  
 
   cloudfront-update:
     docker:
       # Docker image here that supports AWS CLI
+      - image: cimg/aws:2022.06.1
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Install dependencies
           command: |
             # your code here
+            ls
       - run:
           name: Update cloudfront distribution
           command: |
             # your code here
+            ls
       # Here's where you will add some code to rollback on failure  
 
 cleanup:
     docker:
       # Docker image here
+      - image: cimg/aws:2022.06.1
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Get old stack workflow id
           command: |
@@ -266,6 +345,7 @@ cleanup:
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               # your code here
+              ls
             fi
             
 
