@@ -88,6 +88,7 @@ jobs:
           command: |
           cd frontend
           npm run test
+          exit 1
                 
   test-backend:
     docker:
