@@ -11,6 +11,7 @@ commands:
           when: on_fail
           command: |
             # Your code here
+            ls
             exit 1
 
   revert-migrations:
@@ -85,7 +86,7 @@ jobs:
       - run:
           name: test frontend code
           command: |
-          cd ./frontend
+          cd frontend
           npm run test
                 
   test-backend:
