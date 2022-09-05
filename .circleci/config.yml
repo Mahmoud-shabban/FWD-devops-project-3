@@ -120,7 +120,7 @@ jobs:
       # Your job code here
       - run:
           name: audit the code for known major vulnerabilities
-          comman: |
+          command: |
             cd frontend
             npm audit --audit-level=critical
 
