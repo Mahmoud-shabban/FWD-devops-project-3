@@ -121,6 +121,7 @@ jobs:
       - run:
           name: fix security vulnerabilities
           command: |
+            cd frontend
             npm audit fix --audit-level=critical --force
       - run:
           name: audit the code for known major vulnerabilities
@@ -142,6 +143,7 @@ jobs:
       - run:
           name: fix security vulnerabilities
           command: |
+            cd ./backend
             npm audit fix --audit-level=critical --force      
       - run:
           name: audit the backend for known major vulnerabilities
