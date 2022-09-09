@@ -119,9 +119,9 @@ jobs:
           keys: frontend-build
       # Your job code here
       - run:
-        name: fix security vulnerabilities
-        command: |
-          npm audit fix --audit-level=critical --force
+          name: fix security vulnerabilities
+          command: |
+            npm audit fix --audit-level=critical --force
       - run:
           name: audit the code for known major vulnerabilities
           command: |
@@ -140,9 +140,9 @@ jobs:
           keys: backend-build
       # Your job code here
       - run:
-        name: fix security vulnerabilities
-        command: |
-          npm audit fix --audit-level=critical --force      
+          name: fix security vulnerabilities
+          command: |
+            npm audit fix --audit-level=critical --force      
       - run:
           name: audit the backend for known major vulnerabilities
           command: |
