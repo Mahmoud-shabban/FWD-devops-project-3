@@ -122,6 +122,7 @@ jobs:
           name: audit the code for known major vulnerabilities
           command: |
             cd frontend
+            npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
 
   scan-backend: 
@@ -139,6 +140,7 @@ jobs:
           name: audit the backend for known major vulnerabilities
           command: |
             cd backend 
+            npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
 
   deploy-infrastructure:
@@ -243,7 +245,7 @@ jobs:
             # your code here
             cd ..
       - run:
-          name: Get backend url
+          name: Get backend url.
           command: |
             # your code here
             export API_URL="http://${BACKEND_IP}:3030"
