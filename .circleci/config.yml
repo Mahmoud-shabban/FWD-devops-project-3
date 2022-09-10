@@ -143,7 +143,7 @@ jobs:
       - run:
           name: fix security vulnerability
           command: |
-            cd frontend
+            cd backend
             npm install
             npm audit fix --audit-level=critical --force
       - run:
@@ -210,13 +210,13 @@ jobs:
           command: |
             # Your code here
             apk add --update ansible 
-            exit 1
+            # exit 1
       - run:
           name: Configure server
           command: |
             # Your code here
             ansible-playbook -i ansible/inventory.txt ansible/configure-server.yml
-            exit 1
+            # exit 1
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
@@ -233,12 +233,12 @@ jobs:
             cd backend
             MIGRATION_RESULT=$(npm run migrations)
             echo $MIGRATION_RESULT 
-            exit 1
+            # exit 1
       - run:
           name: Send migration results to memstash
           command: |
             # Your code here
-            exit 1
+            # exit 1
      # Here's where you will add some code to rollback on failure      
 
   deploy-frontend:
