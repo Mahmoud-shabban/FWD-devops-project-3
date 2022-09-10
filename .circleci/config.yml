@@ -118,6 +118,11 @@ jobs:
           keys: frontend-build
       # Your job code here
       - run:
+          name: fix security vulnerability
+          command: |
+            cd frontend
+            npm audit fix --audit-level=critical --force
+      - run:
           name: audit the code for known major vulnerabilities
           command: |
             cd frontend
@@ -134,6 +139,11 @@ jobs:
       - restore_cache:
           keys: backend-build
       # Your job code here
+      - run:
+          name: fix security vulnerability
+          command: |
+            cd frontend
+            npm audit fix --audit-level=critical --force
       - run:
           name: audit the backend for known major vulnerabilities
           command: |
