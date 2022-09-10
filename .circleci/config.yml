@@ -121,6 +121,7 @@ jobs:
           name: fix security vulnerability
           command: |
             cd frontend
+            npm install
             npm audit fix --audit-level=critical --force
       - run:
           name: audit the code for known major vulnerabilities
@@ -143,6 +144,7 @@ jobs:
           name: fix security vulnerability
           command: |
             cd frontend
+            npm install
             npm audit fix --audit-level=critical --force
       - run:
           name: audit the backend for known major vulnerabilities
@@ -165,7 +167,7 @@ jobs:
               --tags project=udaPeople \
               --stack-name "backend-stack-${CIRCLE_BUILD_NUM}" \
               --parameter-overrides ID="${CIRCLE_BUILD_NUM}"  
-              exit 1
+              # exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -174,7 +176,7 @@ jobs:
               --tags project=udaPeople \
               --stack-name "frontend-stack-${CIRCLE_BUILD_NUM}" \
               --parameter-overrides ID="${CIRCLE_BUILD_NUM}"  
-              exit 1
+              # exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -183,7 +185,7 @@ jobs:
             --filters "Name=tag:Name,Values=backend-${CIRCLE_BUILD_NUM}" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text >> .circleci/ansible/inventory.txt
-            exit 1
+            # exit 1
       - persist_to_workspace:
           root: ~/
           paths:
