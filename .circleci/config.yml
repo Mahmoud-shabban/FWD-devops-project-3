@@ -156,10 +156,11 @@ jobs:
   deploy-infrastructure:
     docker:
       # Docker image here that supports AWS CLI
-      - image: cimg/aws:2022.06.1
+      - image: cimg/base:stable #cimg/aws:2022.06.1
     steps:
       # Checkout code from git
       - checkout
+      - install_awscli
       - run:
           name: Ensure back-end infrastructure exists
           command: |
