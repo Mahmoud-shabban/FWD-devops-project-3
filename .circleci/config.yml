@@ -47,7 +47,7 @@ jobs:
             # Your code here ==================
             cd ./frontend
             npm i
-            npm run build           
+            npm run build
             # exit 1
       - save_cache:
           paths: [frontend/node_modules]
@@ -66,7 +66,7 @@ jobs:
             # Your code here ==================
             cd ./backend
             npm i
-            npm run build     
+            npm run build
             # exit 1
       - save_cache:
           paths: [backend/node_modules]
@@ -88,7 +88,6 @@ jobs:
           command: |
             cd ./frontend
             npm run test
-            # exit 1
                 
   test-backend:
     docker:
@@ -119,22 +118,14 @@ jobs:
           keys: frontend-build
       # Your job code here
       - run:
-          name: fix security vulnerabilities
-          command: |
-            cd frontend
-            npm install
-            npm audit fix --audit-level=critical --force
-      - run:
           name: audit the code for known major vulnerabilities
           command: |
             cd frontend
-            npm install
-            npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
 
   scan-backend: 
     docker:
-      # Docker image here +++++++++++++++++++++++++++++++++++++++++
+      # Docker image here ++++++++++++++++++++++++++++++++++++++++++
       - image: circleci/node:13.8.0 
     steps:
       # Checkout code from git
@@ -144,17 +135,9 @@ jobs:
           keys: backend-build
       # Your job code here
       - run:
-          name: fix security vulnerabilities
-          command: |
-            cd ./backend
-            npm install
-            npm audit fix --audit-level=critical --force      
-      - run:
           name: audit the backend for known major vulnerabilities
           command: |
             cd backend 
-            # npm install
-            npm audit fix --audit-level=critical --force            
             npm audit --audit-level=critical
 
   deploy-infrastructure:
@@ -168,20 +151,20 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
-              --template-file ./files/backend.yml \
+              --template-file .circleci/files/backend.yml \
               --tags project=udaPeople \
               --stack-name "backend-stack-${CIRCLE_BUILD_NUM}" \
               --parameter-overrides ID="${CIRCLE_BUILD_NUM}"  
-              # exit 1
+              exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
-              --template-file ./files/frontend.yml \
+              --template-file .circleci/files/frontend.yml \
               --tags project=udaPeople \
               --stack-name "frontend-stack-${CIRCLE_BUILD_NUM}" \
               --parameter-overrides ID="${CIRCLE_BUILD_NUM}"  
-              # exit 1
+              exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -190,7 +173,7 @@ jobs:
             --filters "Name=tag:Name,Values=backend-${CIRCLE_BUILD_NUM}" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text >> .circleci/ansible/inventory.txt
-            # exit 1
+            exit 1
       - persist_to_workspace:
           root: ~/
           paths:
@@ -221,7 +204,7 @@ jobs:
           command: |
             # Your code here
             ansible-playbook -i ansible/inventory.txt ansible/configure-server.yml
-            # exit 1
+            exit 1
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
@@ -259,7 +242,7 @@ jobs:
             # your code here
             cd ..
       - run:
-          name: Get backend url.
+          name: Get backend url
           command: |
             # your code here
             export API_URL="http://${BACKEND_IP}:3030"
@@ -384,7 +367,7 @@ workflows:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
-              only: [test-feature-branch]
+              only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
