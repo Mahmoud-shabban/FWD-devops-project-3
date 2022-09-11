@@ -3,7 +3,7 @@ version: 2.1
 commands:
   install_ansible:
     description: install ansible on docker image
-    setps:
+    steps:
       - run:
           name: install ansible
           command: |
