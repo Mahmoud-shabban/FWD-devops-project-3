@@ -323,7 +323,7 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - install_ansible
+      # - install_ansible
       - install_awscli
       # Add ssh keys with fingerprint
       - add_ssh_keys:
