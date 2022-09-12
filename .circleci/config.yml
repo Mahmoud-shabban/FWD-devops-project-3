@@ -65,7 +65,7 @@ commands:
   get-logs:
     description: get the logs of faild migrations
     steps:
-      -run:
+      - run:
           name: get-logs
           when: on_fail
           command: |
