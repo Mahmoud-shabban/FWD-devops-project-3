@@ -2,8 +2,9 @@
 - name: "upgrade packages"
   become: yes
   apt:
-    - update_cache: yes
-    - upgrade: yes
+    update_cache: yes
+    upgrade: yes
+    autoremove: yes
 
 - name: "install Nodejs and npm"
   become: yes
