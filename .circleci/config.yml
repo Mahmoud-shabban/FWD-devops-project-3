@@ -236,12 +236,12 @@ jobs:
       # attach workspace
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            # Your code here
-            apk add --update ansible 
-            # exit 1
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       # Your code here
+      #       apk add --update ansible 
+      #       # exit 1
       - run:
           name: Configure Server
           command: |
