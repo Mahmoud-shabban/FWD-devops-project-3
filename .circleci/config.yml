@@ -69,7 +69,7 @@ commands:
           name: get-logs
           when: on_fail
           command: |
-          cat /home/circleci/.npm/_logs/2022-09-12T20_57_34_423Z-debug.log
+            cat /home/circleci/.npm/_logs/2022-09-12T20_57_34_423Z-debug.log
             
 jobs:
   build-frontend:
