@@ -19,6 +19,15 @@ commands:
           command: |
             curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs
+  install_awscli:
+    description: Install AWS cli client
+    steps:
+      - run:
+          name: Install AWS cli client
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -225,7 +234,7 @@ jobs:
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
-      - image: cimg/base:stable
+      - image: cimg/aws:2022.06.1
     steps:
       # Checkout code from git
       - checkout
