@@ -342,7 +342,7 @@ jobs:
       #       apt-get install tar
       #       apt-get install gzip
       #       apt-get install 
-      # - run:
+      - run:
           name: Package Backend
           command: |
             cd backend
