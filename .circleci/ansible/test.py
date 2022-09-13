@@ -1,8 +1,3 @@
-# import numpy as np
-word = 'devops'
-# l = []
-# for i in word:
-#     l.append(i)
-# arr = np.array(l)
-# r_arr = arr[::-1]
-print(word[::-1])
+l = {2:3, 3:7}
+if 2 in l:
+    print(l[2])
