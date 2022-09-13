@@ -339,22 +339,14 @@ jobs:
             # your code here
             cd backend
             npm install
-      #       apt-get install tar
-      #       apt-get install gzip
-      #       apt-get install 
       - run:
           name: Package Backend
           command: |
             cd backend
-            pwd
-            echo "*******************"
             npm run build
-            tar -czf artifact.tar.gz dist/* package*
-            ls 
             cd ..
-            echo "*******************"
-            ls -a
-            cp backend/artifact.tar.gz  .circleci/ansible/roles/deploy/files
+            tar -czf artifact.tar.gz backend
+            cp artifact.tar.gz  .circleci/ansible/roles/deploy/files
 
       - run:
           name: Deploy backend
