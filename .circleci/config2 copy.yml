@@ -319,47 +319,57 @@ jobs:
       - revert-migrations              
   deploy-backend:
     docker:
+      # Docker image here that supports Ansible
       - image: cimg/base:stable
     steps:
+      # Checkout code from git
       - checkout
       - install_ansible
-      - install_awscli
       - install_nodejs
-
-      - attach_workspace:
-          at: ~/
-
+      - install_awscli
+      # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints: [0e:4e:ff:fd:b5:35:f5:de:3e:f9:03:f3:89:16:7d:f8]
-      
+      # attach workspace
       - attach_workspace:
           at: ~/
-      
       - run:
           name: Install dependencies
           command: |
+            # your code here
             cd backend
             npm install
       - run:
-          name: generate backend package
+          name: Package Backend
           command: |
             cd backend
             npm run build
-            cd ../
+            cd ..
             tar -czf artifact.tar.gz backend
-            # Copy the files to the deploy role files folder to prepare for deploying it via ansible
-            cp artifact.tar.gz .circleci/ansible/roles/deploy/files
-      
+            cp artifact.tar.gz  .circleci/ansible/roles/deploy/files
+
       - run:
           name: Deploy backend
           command: |
+            # cd backend
+            # npm i
+            # npm run build
+            # cd ..
+            # # Zip the directory
+            # tar -C backend -czvf artifact.tar.gz .
+            # cd .circleci/ansible
+            # echo "Contents  of the inventory.txt file is -------"
+            # cat inventory.txt
+            # # ls .circleci/ansible/roles/deploy/files
+
             cd .circleci/ansible
-            cat inventory.txt
+            pwd
+            echo "************************"
             ansible-playbook -i inventory.txt deploy-backend.yml
-            
-            echo "backend deployed AL7L !!!!!"
-      - destroy-environment    
-      - revert-migrations
+      # Here's where you will add some code to rollback on failure  
+      - destroy-environment
+      - revert-migrations      
+
   smoke-test:
     docker:
       # Lightweight Docker image 
