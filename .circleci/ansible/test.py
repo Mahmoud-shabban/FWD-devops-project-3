@@ -1,5 +1,10 @@
+from asyncio.windows_events import NULL
+from cmath import nan
+
+
 l1 = [2,4,3]
 l2 = [5,6,4]
+
 def add(l1,l2):
     r = []
     temp = 0
