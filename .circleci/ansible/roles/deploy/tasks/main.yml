@@ -4,11 +4,21 @@
     path: ~/backend-app
     state: directory
 
-- name: "Unarchive backend files"
-  become: true
-  unarchive:
+- name: "Copy Backend files"
+  copy:
     src: artifact.tar.gz
     dest: ~/backend-app
+
+- name: "Unarchive backend files"
+  ansible.builtin.shell: tar -xzf artifact.tar.gz
+  args:
+    chdir: ~/backend-app
+
+# - name: "Unarchive backend files"
+#   become: true
+#   unarchive:
+#     src: artifact.tar.gz
+#     dest: ~/backend-app
 
 - name: "Installing Node Dependencies"
   shell: |
