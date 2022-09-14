@@ -326,7 +326,7 @@ jobs:
       - install_awscli
       - install_nodejs
       - restore_cache:
-          keys: [backend-deps]
+          keys: [backend-build]
       - attach_workspace:
           at: ~/
       - add_ssh_keys:
@@ -341,11 +341,18 @@ jobs:
           command: |
             cd backend
             npm run build
-            cd ../
+            cd ..
+            ls 
+            echo "************************"
             tar -czf artifact.tar.gz backend
+            ls 
+            echo "************************"
             # Copy the files to the deploy role files folder to prepare for deploying it via ansible
             cp artifact.tar.gz .circleci/ansible/roles/deploy/files
+            echo "************************"
             ls .circleci/ansible/roles/deploy/files
+            echo "************************"
+            ls -R .circleci/ansible
       - run:
           name: Deploy backend
           command: |
