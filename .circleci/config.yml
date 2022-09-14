@@ -340,19 +340,16 @@ jobs:
           name: generate backend package
           command: |
             cd backend
+            echo "************************"
+            ls
+            echo "************************"
             npm run build
+            ls 
+            echo "************************"
             cd ..
-            ls 
-            echo "************************"
             tar -czf artifact.tar.gz backend
-            ls 
-            echo "************************"
-            # Copy the files to the deploy role files folder to prepare for deploying it via ansible
+            tar tf artifact.tar.gz
             cp artifact.tar.gz .circleci/ansible/roles/deploy/files
-            echo "************************"
-            ls .circleci/ansible/roles/deploy/files
-            echo "************************"
-            ls -R .circleci/ansible
       - run:
           name: Deploy backend
           command: |
