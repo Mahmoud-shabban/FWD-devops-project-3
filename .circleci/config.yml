@@ -272,13 +272,16 @@ jobs:
             cd backend
             npm install
             npm run migrations > migrations_dump.txt
+            cat migrations_dump.txt
       - run:
           name: Send migration status to kvdb.io
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              echo "success !!!"
+              echo "Migrations is success !!!"
               curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+            else
+              echo "No Migration done"
             fi
       - get-logs
       - destroy-environment
@@ -380,10 +383,10 @@ jobs:
             echo $API_URL
             if curl -s $API_URL/api/status | grep "ok"
             then
-              exit 0
+            exit 0
             else
-              curl -s $API_URL/api/status
-              exit 1
+            curl -s $API_URL/api/status
+            exit 1
             fi
       - run:
           name: Frontend smoke test.
@@ -391,9 +394,9 @@ jobs:
             FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
             then
-              exit 1
+            exit 1
             else
-              exit 1
+            exit 1
             fi
       # Here's where you will add some code to rollback on failure  
       - destroy-environment
@@ -405,11 +408,6 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       # your code here
-      #       ls
       - run:
           name: Update cloudfront distribution
           command: |
