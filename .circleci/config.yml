@@ -366,27 +366,25 @@ jobs:
 
   smoke-test:
     docker:
-      # Lightweight Docker image 
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
-      # Checkout code from git
       - checkout
       - install_awscli
+      - install_nodejs
       - run:
           name: Backend smoke test.
           command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}/api/status"
-            if curl "${API_URL}/api/status" | grep "ok"
+            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text)
+            export API_URL=http://${BACKEND_PUBLIC_IP}:3030
+            echo ${API_URL}
+            if curl -s $API_URL/api/status | grep "ok"
             then
-            exit 0
+              exit 0
             else
-            curl -s $API_URL/api/status
-            exit 1
+              exit 1
             fi
       - run:
           name: Frontend smoke test.
