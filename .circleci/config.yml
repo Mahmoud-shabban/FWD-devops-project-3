@@ -251,12 +251,6 @@ jobs:
       # attach workspace
       - attach_workspace:
           at: ~/
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       # Your code here
-      #       apk add --update ansible 
-      #       # exit 1
       - run:
           name: Configure Server
           command: |
@@ -283,6 +277,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
+              echo "success !!!"
               curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - get-logs
@@ -382,11 +377,13 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             export API_URL=http://${BACKEND_PUBLIC_IP}:3030
+            echo $API_URL
             if curl -s $API_URL/api/status | grep "ok"
             then
-              return 0
+              exit 0
             else
-              return 1
+              curl -s $API_URL/api/status
+              exit 1
             fi
       - run:
           name: Frontend smoke test.
@@ -394,9 +391,9 @@ jobs:
             FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
             then
-              return 1
+              exit 1
             else
-              return 1
+              exit 1
             fi
       # Here's where you will add some code to rollback on failure  
       - destroy-environment
