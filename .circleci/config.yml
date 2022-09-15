@@ -426,7 +426,7 @@ jobs:
         # Docker image here
         - image: cimg/aws:2022.06.1
       steps:
-        # Checkout code from git
+        # Checkout code from git 2
         - checkout
         - run:
             name: Remove old stacks and files
