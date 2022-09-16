@@ -1,23 +1,35 @@
 ---
-- name: "upgrade packages"
-  become: yes
+- name: "update apt"
+  become: true
   apt:
     update_cache: yes
-    upgrade: yes
-    autoremove: yes
 
-- name: "install Nodejs and npm"
-  become: yes
+- name: "upgrade apt packages"
+  become: true
+  apt:
+    upgrade: "yes"
+
+- name: "install dependencies."
+  become: true
   apt:
     name: ["nodejs", "npm"]
     state: latest
     update_cache: yes
 
-- name: "install pm2"
+- name: "install nvm"
   become: true
+  npm:
+    name: n
+    global: yes
+    production: yes
+
+- name: "install nodejs 13.8.0"
+  become: true
+  shell: n 13.8.0
+
+- name: "Install PM2 Globally"
   npm:
     name: pm2
     global: yes
     production: yes
     state: present
-

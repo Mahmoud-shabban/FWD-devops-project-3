@@ -69,3 +69,5 @@ node_modules
 .env
 dist
 udacity.pem
+config2 copy.yml
+old-config.yml
