@@ -12,8 +12,8 @@ module.exports = function(config) {
         mutator: "javascript",
         
         webpack: {
-          configFile: "webpack.config.js",
-          silent: true
+        configFile: "webpack.config.js",
+        silent: true
         },
         
         tsconfigFile: "tsconfig.json",
